@@ -1,6 +1,9 @@
 # HMMP
 HSP3 Mylist Music Player
 
+## Library
+- vAudio
+
 ## Author
 - [kota-shiokara](https://github.com/kota-shiokara)
 - Email: ikanoshiokara.fun@gmail.com
