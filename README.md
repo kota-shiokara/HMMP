@@ -2,7 +2,7 @@
 HSP3 Mylist Music Player
 
 ## Library
-- vAudio
+- [vAudio](./vAudio.txt)
 
 ## Author
 - [kota-shiokara](https://github.com/kota-shiokara)

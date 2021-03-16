@@ -22,7 +22,8 @@ title "HMMP - ver " + VERSION
 ;==============================
 ; 変数定義
 ;==============================
-;sdim fname, 128, 10
+baseDir = dir_cur ;ソースコードのディレクトリパス保持変数
+vol = 100
 
 ;==============================
 ; 関数定義
@@ -75,6 +76,7 @@ title "HMMP - ver " + VERSION
     button "Restart", *main
     pos 0, 32
     mes fname
+    goto *la
     stop
 
 *Label_play
@@ -89,3 +91,29 @@ title "HMMP - ver " + VERSION
     
 *Label_end
     end
+
+*la
+;	ウィンドウスタイルに目盛り自動表示 ($1=TBS_AUTOTICKS)
+    winobj "msctls_trackbar32", "", , $50000000 | $1, 200, 30
+;	このトラックバーのウィンドウハンドル取得
+	hTrackbar = objinfo(stat, 2)
+
+;	つまみの位置 50 (TBM_SETPOS)
+	sendmsg hTrackbar, $405, 1, 50
+
+;	バーの目盛り間隔 10 (TBM_SETTICFREQ)
+	sendmsg hTrackbar, $414, 10
+
+;	リアルタイムで垂直バーの動きを見たい (WM_VSCROLL)
+;	(水平バーの場合はWM_HSCROLLを)
+	oncmd gosub *vscroll, $114
+
+	stop
+
+*vscroll
+	if lparam = hTrackbar {
+		sendmsg hTrackbar, $400
+        vol = stat
+        vAudioSetVolume ah, vol
+	}
+	return
