@@ -10,8 +10,8 @@ title "HMMP - ver " + VERSION
 ;==============================
 ; include
 ;==============================
-#include "vAudio.as"
-#include "logDump.hsp"
+#include "lib/vAudio.as"
+#include "lib/logDump.hsp"
 
 ;==============================
 ; 定数定義
