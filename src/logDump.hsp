@@ -1,0 +1,5 @@
+#module
+#deffunc logDump str tag, var message
+    logmes tag + ": " + message
+    return
+#global

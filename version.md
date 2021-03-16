@@ -1,4 +1,5 @@
 # version
 |version|comments|date| 
 |:-----------|:------------|:------------:| 
-|ver 0.0.1|mp3 play|'21 03/14| 
+|ver 0.0.2|feat: play wav and log method|'21 03/16| 
+|ver 0.0.1|feat: play mp3|'21 03/14| 

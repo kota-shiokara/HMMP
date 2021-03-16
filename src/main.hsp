@@ -4,13 +4,14 @@
 ; Repository : https://github.com/kota-shokara/HMMP
 ;
 
-VERSION = "0.0.1"
+VERSION = "0.0.2"
 title "HMMP - ver " + VERSION
 
 ;==============================
 ; include
 ;==============================
 #include "vAudio.as"
+#include "logDump.hsp"
 
 ;==============================
 ; 定数定義
@@ -27,24 +28,18 @@ title "HMMP - ver " + VERSION
 ; 関数定義
 ;==============================
 #module
-#defcfunc vload str p1
+#defcfunc vLoad str p1
     exist p1
     if strsize = -1 : return 0
     filesize = strsize
     sdim buf, filesize
     bload p1, buf, filesize
     logmes "buf: "+buf
+    logmes "filesize: "+filesize
     ah = vAudioLoadFromMemory( buf, filesize )
     sdim buf, 1
     logmes "ah: "+ah
-    if ah = 0 : return 0
 	return ah
-
-#defcfunc mlog ;logとしてテキストファイルを吐き出したい
-    sdim list, 256
-    dirlist list, "HMMP", 5
-    chdir "HMMP"
-    logmes dir_cur
 #global
 
 ;==============================
@@ -65,8 +60,8 @@ title "HMMP - ver " + VERSION
     dialog "wav;*.mp3", 16, "music"
     if stat = 0 : goto *Label_end
     fname = refstr
-    ah = vload(fname)
-    logmes ah
+    logDump "fname", fname
+    ah = vLoad(fname)
     if ah = 0 : goto *Label_end
 
     objsize 160, 32

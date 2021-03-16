@@ -4,5 +4,7 @@ packfile
 *.ax
 obj
 
+test.hsp
+
 # vscode
 .vscode
