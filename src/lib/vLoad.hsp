@@ -1,0 +1,14 @@
+#module
+    #defcfunc vLoad str p1
+        exist p1
+        if strsize = -1 : return 0
+        filesize = strsize
+        sdim buf, filesize
+        bload p1, buf, filesize
+        logmes "buf: "+buf
+        logmes "filesize: "+filesize
+        ah = vAudioLoadFromMemory( buf, filesize )
+        sdim buf, 1
+        logmes "ah: "+ah
+    return ah
+#global

@@ -4,7 +4,7 @@
 ; Repository : https://github.com/kota-shokara/HMMP
 ;
 
-VERSION = "0.0.2"
+VERSION = "0.0.3"
 title "HMMP - ver " + VERSION
 
 ;==============================
@@ -12,48 +12,56 @@ title "HMMP - ver " + VERSION
 ;==============================
 #include "lib/vAudio.as"
 #include "lib/logDump.hsp"
+#include "lib/vLoad.hsp"
 
 ;==============================
 ; 定数定義
 ;==============================
 #define WINDOW_X 640
 #define WINDOW_Y 480
+#define true 1
+#define false 0
 
 ;==============================
 ; 変数定義
 ;==============================
 baseDir = dir_cur ;ソースコードのディレクトリパス保持変数
-vol = 100
+onDefault = true ;デフォルト設定かどうか
+
+ah = 0
+volume = 80
+onPause = false
+onPlay = false
 
 ;==============================
 ; 関数定義
 ;==============================
-#module
-#defcfunc vLoad str p1
-    exist p1
-    if strsize = -1 : return 0
-    filesize = strsize
-    sdim buf, filesize
-    bload p1, buf, filesize
-    logmes "buf: "+buf
-    logmes "filesize: "+filesize
-    ah = vAudioLoadFromMemory( buf, filesize )
-    sdim buf, 1
-    logmes "ah: "+ah
-	return ah
-#global
+
 
 ;==============================
 ; おまじない
 ;==============================
-;vAudioEnableFileType VAUDIO_FILETYPE_WAVE, 1 ;これでもwavファイル読み込みできない
+vAudioInit
+goto *initialize_window
+
+*initialize_value
+    onPlay = false
+    onPause = false
+
+    ;既に曲がロードされてて再生中の時
+    if ah != 0 : onPlay = vAudioIsPlaying( ah )
+    if onPlay {
+        vAudioStop ah
+        onPlay = false
+    } 
+return
 
 ;初期化
-*initialize
-    vAudioInit
+*initialize_window
+    gosub *initialize_value
     cls
     screen 0, WINDOW_X, WINDOW_Y
-    goto *main
+goto *main
 
 ;main
 *main
@@ -73,24 +81,37 @@ vol = 100
     pos 320, 0
     button "END", *Label_end
     pos 480, 0
-    button "Restart", *main
+    button "Restart", *Label_restart
     pos 0, 32
     mes fname
     goto *la
-    stop
+stop
 
 *Label_play
-    vAudioPlay ah
+    if onPause {
+        vAudioResume ah
+        onPause = false
+    } else {
+        vAudioPlay ah
+    }
+    vAudioSetVolume ah, volume
     logmes "start"
-    stop
+stop
     
 *Label_stop
     vAudioStop ah
     logmes "stop"
-    stop
+    onPause = true
+stop
     
+*Label_restart
+    vAudioRelease ah
+    gosub *initialize_value
+    logmes "restart"
+goto *main
+
 *Label_end
-    end
+end
 
 *la
 ;	ウィンドウスタイルに目盛り自動表示 ($1=TBS_AUTOTICKS)
@@ -99,7 +120,7 @@ vol = 100
 	hTrackbar = objinfo(stat, 2)
 
 ;	つまみの位置 50 (TBM_SETPOS)
-	sendmsg hTrackbar, $405, 1, 50
+	sendmsg hTrackbar, $405, 1, volume
 
 ;	バーの目盛り間隔 10 (TBM_SETTICFREQ)
 	sendmsg hTrackbar, $414, 10
@@ -108,12 +129,12 @@ vol = 100
 ;	(水平バーの場合はWM_HSCROLLを)
 	oncmd gosub *vscroll, $114
 
-	stop
+stop
 
 *vscroll
 	if lparam = hTrackbar {
 		sendmsg hTrackbar, $400
         vol = stat
-        vAudioSetVolume ah, vol
+        vAudioSetVolume ah, volume
 	}
-	return
+return
